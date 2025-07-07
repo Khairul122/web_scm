@@ -1,21 +1,4 @@
-<?php
-require_once 'models/AuthModel.php';
-$authModel = new AuthModel();
-$user = $authModel->getCurrentUser();
-$role = $authModel->getCurrentRole();
 
-$greeting = 'Good Morning';
-$hour = date('G');
-if ($hour >= 12 && $hour < 17) {
-    $greeting = 'Good Afternoon';
-} elseif ($hour >= 17) {
-    $greeting = 'Good Evening';
-}
-
-$userName = $user['nama_lengkap'] ?? 'User';
-$userEmail = $user['email'] ?? $user['phone'] ?? '';
-$userRole = ucfirst($role ?? 'User');
-?>
 
 <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">

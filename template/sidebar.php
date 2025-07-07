@@ -1,9 +1,4 @@
-<?php
-require_once 'models/AuthModel.php';
-$authModel = new AuthModel();
-$role = $authModel->getCurrentRole();
-$currentUrl = $_SERVER['REQUEST_URI'];
-?>
+
 
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
