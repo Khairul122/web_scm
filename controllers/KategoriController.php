@@ -15,19 +15,13 @@ class KategoriController {
         $this->authModel->requireLogin();
         $this->authModel->requireWebAccess();
 
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/dashboard?error=' . urlencode('Access denied'));
-            exit;
-        }
-
-        $kategoriList = $this->kategoriModel->getAllKategori();
-        $error = $_GET['error'] ?? '';
-        $success = $_GET['success'] ?? '';
+        $user = $this->authModel->getCurrentUser();
+        $kategoriData = $this->kategoriModel->getAllKategori();
 
         $data = [
-            'kategori' => $kategoriList,
-            'error' => $error,
-            'success' => $success
+            'user' => $user,
+            'kategori' => $kategoriData['data']['data'] ?? [],
+            'error' => $kategoriData['error'] ?? null
         ];
 
         include VIEWS_PATH . 'admin/kategori/index.php';
@@ -37,49 +31,11 @@ class KategoriController {
         $this->authModel->requireLogin();
         $this->authModel->requireWebAccess();
 
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Access denied'));
-            exit;
-        }
-
+        $user = $this->authModel->getCurrentUser();
         $data = [
+            'user' => $user,
             'action' => 'create',
-            'kategori' => null,
-            'error' => $_GET['error'] ?? '',
-            'success' => $_GET['success'] ?? ''
-        ];
-
-        include VIEWS_PATH . 'admin/kategori/form.php';
-    }
-
-    public function edit() {
-        $this->authModel->requireLogin();
-        $this->authModel->requireWebAccess();
-
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Access denied'));
-            exit;
-        }
-
-        $id = $this->getIdFromUrl();
-        
-        if (!$id) {
-            header('Location: /web_scm/kategori?error=' . urlencode('ID kategori tidak valid'));
-            exit;
-        }
-
-        $kategori = $this->kategoriModel->getKategoriById($id);
-        
-        if (!$kategori) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Kategori tidak ditemukan'));
-            exit;
-        }
-
-        $data = [
-            'action' => 'edit',
-            'kategori' => $kategori,
-            'error' => $_GET['error'] ?? '',
-            'success' => $_GET['success'] ?? ''
+            'kategori' => null
         ];
 
         include VIEWS_PATH . 'admin/kategori/form.php';
@@ -89,112 +45,105 @@ class KategoriController {
         $this->authModel->requireLogin();
         $this->authModel->requireWebAccess();
 
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Access denied'));
-            exit;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /web_scm/kategori/create');
-            exit;
-        }
-
-        $namaKategori = $_POST['nama_kategori'] ?? '';
+        $nama_kategori = $_POST['nama_kategori'] ?? '';
         $deskripsi = $_POST['deskripsi'] ?? '';
 
-        if (empty($namaKategori)) {
-            header('Location: /web_scm/kategori/create?error=' . urlencode('Nama kategori harus diisi'));
+        if (empty($nama_kategori)) {
+            header('Location: /web_scm/admin/kategori/create?error=' . urlencode('Nama kategori wajib diisi'));
             exit;
         }
 
         $data = [
-            'nama_kategori' => $namaKategori,
+            'nama_kategori' => $nama_kategori,
             'deskripsi' => $deskripsi
         ];
 
         $result = $this->kategoriModel->createKategori($data);
 
         if ($result['success']) {
-            header('Location: /web_scm/kategori?success=' . urlencode('Kategori berhasil ditambahkan'));
+            header('Location: /web_scm/admin/kategori?success=' . urlencode('Kategori berhasil dibuat'));
         } else {
-            header('Location: /web_scm/kategori/create?error=' . urlencode($result['error']));
+            header('Location: /web_scm/admin/kategori/create?error=' . urlencode($result['error'] ?? 'Gagal membuat kategori'));
         }
         exit;
     }
 
-    public function update() {
+    public function edit($id) {
         $this->authModel->requireLogin();
         $this->authModel->requireWebAccess();
 
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Access denied'));
-            exit;
-        }
+        $user = $this->authModel->getCurrentUser();
+        $kategoriData = $this->kategoriModel->getKategoriById($id);
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /web_scm/kategori');
-            exit;
-        }
-
-        $id = $_POST['id'] ?? '';
-        $namaKategori = $_POST['nama_kategori'] ?? '';
-        $deskripsi = $_POST['deskripsi'] ?? '';
-
-        if (empty($id) || empty($namaKategori)) {
-            header('Location: /web_scm/kategori/edit/' . $id . '?error=' . urlencode('Data tidak lengkap'));
+        if (!$kategoriData['success']) {
+            header('Location: /web_scm/admin/kategori?error=' . urlencode('Kategori tidak ditemukan'));
             exit;
         }
 
         $data = [
-            'nama_kategori' => $namaKategori,
+            'user' => $user,
+            'action' => 'edit',
+            'kategori' => $kategoriData['data']['data'] ?? null
+        ];
+
+        include VIEWS_PATH . 'admin/kategori/form.php';
+    }
+
+    public function update($id) {
+        $this->authModel->requireLogin();
+        $this->authModel->requireWebAccess();
+
+        $nama_kategori = $_POST['nama_kategori'] ?? '';
+        $deskripsi = $_POST['deskripsi'] ?? '';
+
+        if (empty($nama_kategori)) {
+            header('Location: /web_scm/admin/kategori/edit/' . $id . '?error=' . urlencode('Nama kategori wajib diisi'));
+            exit;
+        }
+
+        $data = [
+            'nama_kategori' => $nama_kategori,
             'deskripsi' => $deskripsi
         ];
 
         $result = $this->kategoriModel->updateKategori($id, $data);
 
         if ($result['success']) {
-            header('Location: /web_scm/kategori?success=' . urlencode('Kategori berhasil diperbarui'));
+            header('Location: /web_scm/admin/kategori?success=' . urlencode('Kategori berhasil diperbarui'));
         } else {
-            header('Location: /web_scm/kategori/edit/' . $id . '?error=' . urlencode($result['error']));
+            header('Location: /web_scm/admin/kategori/edit/' . $id . '?error=' . urlencode($result['error'] ?? 'Gagal memperbarui kategori'));
         }
         exit;
     }
 
-    public function delete() {
+    public function delete($id) {
         $this->authModel->requireLogin();
         $this->authModel->requireWebAccess();
-
-        if (!$this->authModel->hasRole('admin')) {
-            header('Location: /web_scm/kategori?error=' . urlencode('Access denied'));
-            exit;
-        }
-
-        $id = $this->getIdFromUrl();
-        
-        if (!$id) {
-            header('Location: /web_scm/kategori?error=' . urlencode('ID kategori tidak valid'));
-            exit;
-        }
 
         $result = $this->kategoriModel->deleteKategori($id);
 
         if ($result['success']) {
-            header('Location: /web_scm/kategori?success=' . urlencode('Kategori berhasil dihapus'));
+            header('Location: /web_scm/admin/kategori?success=' . urlencode('Kategori berhasil dihapus'));
         } else {
-            header('Location: /web_scm/kategori?error=' . urlencode($result['error']));
+            header('Location: /web_scm/admin/kategori?error=' . urlencode($result['error'] ?? 'Gagal menghapus kategori'));
         }
         exit;
     }
 
-    private function getIdFromUrl() {
-        $url = $_GET['url'] ?? '';
-        $urlParts = explode('/', $url);
-        
-        $kategoriIndex = array_search('kategori', $urlParts);
-        if ($kategoriIndex !== false && isset($urlParts[$kategoriIndex + 2])) {
-            return $urlParts[$kategoriIndex + 2];
-        }
-        
-        return null;
+    public function products($id) {
+        $this->authModel->requireLogin();
+        $this->authModel->requireWebAccess();
+
+        $user = $this->authModel->getCurrentUser();
+        $productsData = $this->kategoriModel->getKategoriProducts($id);
+
+        $data = [
+            'user' => $user,
+            'kategori' => $productsData['data']['kategori'] ?? null,
+            'products' => $productsData['data']['data'] ?? [],
+            'error' => $productsData['error'] ?? null
+        ];
+
+        include VIEWS_PATH . 'admin/kategori/products.php';
     }
 }

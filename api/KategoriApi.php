@@ -71,4 +71,8 @@ class KategoriApi {
     public function deleteKategori($id) {
         return $this->makeRequest('/' . $id, 'DELETE');
     }
+
+    public function getKategoriProducts($id) {
+        return $this->makeRequest('/' . $id . '/products');
+    }
 }

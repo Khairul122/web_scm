@@ -12,172 +12,65 @@
             <div class="col-sm-12">
               <div class="home-tab">
                 <div class="d-sm-flex align-items-center justify-content-between border-bottom">
-                  <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item">
-                      <a class="nav-link active ps-0" id="home-tab" data-bs-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">
-                        <?php echo isset($data['search_query']) ? 'Hasil Pencarian: "' . htmlspecialchars($data['search_query']) . '"' : 'Ekspedisi Management'; ?>
-                      </a>
-                    </li>
-                  </ul>
-                  <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
-                      <i class="mdi mdi-magnify"></i> Cari
+                  <div>
+                    <div class="btn-wrapper">
+                      <h3 class="text-primary">Manajemen Kategori</h3>
+                    </div>
+                  </div>
+                  <div>
+                    <button type="button" class="btn btn-primary" onclick="showCreateForm()">
+                      <i class="icon-plus"></i> Tambah Kategori
                     </button>
-                    <div class="dropdown">
-                      <button class="btn btn-warning btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="mdi mdi-filter"></i> Filter
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/web_scm/ekspedisi">Semua Ekspedisi</a></li>
-                        <li><a class="dropdown-item" href="/web_scm/ekspedisi?status=active">Aktif</a></li>
-                        <li><a class="dropdown-item" href="/web_scm/ekspedisi?status=inactive">Nonaktif</a></li>
-                      </ul>
-                    </div>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="mdi mdi-cog"></i> Tools
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="showImportModal()">
-                          <i class="mdi mdi-download"></i> Import dari API
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showBulkUpdateModal()">
-                          <i class="mdi mdi-format-list-bulleted"></i> Update Status Massal
-                        </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showCleanupModal()">
-                          <i class="mdi mdi-delete-sweep"></i> Bersihkan Performa Buruk
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/web_scm/ekspedisi/analytics">
-                          <i class="mdi mdi-chart-line"></i> Analytics
-                        </a></li>
-                      </ul>
-                    </div>
-                    <a href="/web_scm/ekspedisi/create" class="btn btn-primary btn-sm text-white mb-0 me-0">
-                      <i class="mdi mdi-plus"></i> Tambah Ekspedisi
-                    </a>
                   </div>
                 </div>
+
+                <!-- Alert Messages -->
+                <div id="alertContainer" style="margin-top: 15px;"></div>
+
+                <!-- Kategori Table -->
                 <div class="tab-content tab-content-basic">
-                  <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                    
-                    <?php if (isset($data['error']) && !empty($data['error'])): ?>
-                      <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                        <?php echo htmlspecialchars($data['error']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                      </div>
-                    <?php endif; ?>
-
-                    <?php if (isset($data['success']) && !empty($data['success'])): ?>
-                      <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                        <?php echo htmlspecialchars($data['success']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                      </div>
-                    <?php endif; ?>
-
-                    <div class="row mt-4">
-                      <div class="col-12">
-                        <div class="card">
-                          <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                              <h4 class="card-title mb-0">
-                                Daftar Ekspedisi
-                                <?php if (isset($data['status_filter']) && !empty($data['status_filter'])): ?>
-                                  <span class="badge bg-info ms-2"><?php echo ucfirst($data['status_filter']); ?></span>
-                                <?php endif; ?>
-                              </h4>
-                              <div class="d-flex align-items-center">
-                                <input type="checkbox" id="selectAll" class="form-check-input me-2">
-                                <label for="selectAll" class="form-check-label me-3">Pilih Semua</label>
-                                <button type="button" class="btn btn-sm btn-outline-primary" id="bulkActionBtn" style="display: none;" onclick="showBulkUpdateModal()">
-                                  <i class="mdi mdi-format-list-bulleted"></i> Aksi Massal
-                                </button>
-                              </div>
-                            </div>
-                            <div class="table-responsive">
-                              <table class="table table-striped" id="ekspedisiTable">
-                                <thead>
-                                  <tr>
-                                    <th width="40">
-                                      <input type="checkbox" id="selectAllHeader" class="form-check-input">
-                                    </th>
-                                    <th>ID</th>
-                                    <th>Kode</th>
-                                    <th>Nama Ekspedisi</th>
-                                    <th>Status</th>
-                                    <th>Tanggal Dibuat</th>
-                                    <th>Action</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <?php if (!empty($data['ekspedisi'])): ?>
-                                    <?php foreach ($data['ekspedisi'] as $ekspedisi): ?>
+                  <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row">
+                      <div class="col-lg-12 d-flex flex-column">
+                        <div class="row flex-grow">
+                          <div class="col-12 grid-margin stretch-card">
+                            <div class="card card-rounded">
+                              <div class="card-body">
+                                <div class="d-sm-flex justify-content-between align-items-start">
+                                  <div>
+                                    <h4 class="card-title card-title-dash">Data Kategori</h4>
+                                    <p class="card-subtitle card-subtitle-dash">Kelola kategori produk</p>
+                                  </div>
+                                </div>
+                                <div class="table-responsive mt-1">
+                                  <table class="table select-table">
+                                    <thead>
                                       <tr>
-                                        <td>
-                                          <input type="checkbox" class="form-check-input row-checkbox" value="<?php echo $ekspedisi['id']; ?>">
-                                        </td>
-                                        <td><?php echo htmlspecialchars($ekspedisi['id']); ?></td>
-                                        <td>
-                                          <span class="badge bg-secondary"><?php echo htmlspecialchars(strtoupper($ekspedisi['kode'])); ?></span>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($ekspedisi['nama']); ?></td>
-                                        <td>
-                                          <?php if ($ekspedisi['status'] === 'aktif'): ?>
-                                            <span class="badge bg-success">Aktif</span>
-                                          <?php else: ?>
-                                            <span class="badge bg-danger">Nonaktif</span>
-                                          <?php endif; ?>
-                                        </td>
-                                        <td><?php echo htmlspecialchars($ekspedisi['created_at'] ?? '-'); ?></td>
-                                        <td>
-                                          <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-bs-toggle="dropdown">
-                                              <i class="mdi mdi-cog"></i> Aksi
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                              <li>
-                                                <a href="/web_scm/ekspedisi/edit/<?php echo $ekspedisi['id']; ?>" class="dropdown-item">
-                                                  <i class="mdi mdi-pencil"></i> Edit
-                                                </a>
-                                              </li>
-                                              <li>
-                                                <a href="#" class="dropdown-item" onclick="toggleStatus(<?php echo $ekspedisi['id']; ?>, '<?php echo $ekspedisi['status'] === 'aktif' ? 'nonaktif' : 'aktif'; ?>')">
-                                                  <i class="mdi mdi-toggle-switch"></i> 
-                                                  <?php echo $ekspedisi['status'] === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                                </a>
-                                              </li>
-                                              <li><hr class="dropdown-divider"></li>
-                                              <li>
-                                                <a href="#" class="dropdown-item text-danger" onclick="deleteEkspedisi(<?php echo $ekspedisi['id']; ?>)">
-                                                  <i class="mdi mdi-delete"></i> Hapus
-                                                </a>
-                                              </li>
-                                            </ul>
+                                        <th>No</th>
+                                        <th>Nama Kategori</th>
+                                        <th>Deskripsi</th>
+                                        <th>Total Produk</th>
+                                        <th>Aksi</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody id="kategoriTableBody">
+                                      <tr>
+                                        <td colspan="5" class="text-center">
+                                          <div class="spinner-border" role="status">
+                                            <span class="sr-only">Loading...</span>
                                           </div>
+                                          <p>Memuat data...</p>
                                         </td>
                                       </tr>
-                                    <?php endforeach; ?>
-                                  <?php else: ?>
-                                    <tr>
-                                      <td colspan="7" class="text-center py-4">
-                                        <div class="text-muted">
-                                          <i class="mdi mdi-inbox mdi-48px"></i>
-                                          <p class="mt-2">Tidak ada data ekspedisi</p>
-                                          <?php if (isset($data['search_query'])): ?>
-                                            <a href="/web_scm/ekspedisi" class="btn btn-sm btn-primary">Kembali ke Semua Data</a>
-                                          <?php endif; ?>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  <?php endif; ?>
-                                </tbody>
-                              </table>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -188,264 +81,308 @@
     </div>
   </div>
 
-  <!-- Search Modal -->
-  <div class="modal fade" id="searchModal" tabindex="-1">
-    <div class="modal-dialog">
+  <!-- Modal Form -->
+  <div class="modal fade" id="kategoriModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Cari Ekspedisi</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title" id="modalTitle">Tambah Kategori</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
         </div>
-        <div class="modal-body">
-          <form action="/web_scm/ekspedisi/search" method="GET">
-            <div class="mb-3">
-              <label for="searchQuery" class="form-label">Kata Kunci</label>
-              <input type="text" class="form-control" id="searchQuery" name="q" placeholder="Masukkan kode atau nama ekspedisi..." required>
+        <form id="kategoriForm">
+          <div class="modal-body">
+            <input type="hidden" id="kategoriId" name="id">
+            <div class="form-group">
+              <label for="nama_kategori">Nama Kategori <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" required>
             </div>
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary">
-                <i class="mdi mdi-magnify"></i> Cari
-              </button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <div class="form-group">
+              <label for="deskripsi">Deskripsi</label>
+              <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"></textarea>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Import Modal -->
-  <div class="modal fade" id="importModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Import Ekspedisi dari API</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <p>Import ekspedisi dari Raja Ongkir API. Proses ini akan menambahkan ekspedisi baru yang belum ada di database.</p>
-          <div class="alert alert-info">
-            <i class="mdi mdi-information"></i>
-            Ekspedisi yang sudah ada tidak akan digandakan.
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-primary" onclick="importFromApi()">
-            <i class="mdi mdi-download"></i> Import Sekarang
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bulk Update Modal -->
-  <div class="modal fade" id="bulkUpdateModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Update Status Massal</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="bulkUpdateForm">
-            <div class="mb-3">
-              <label for="bulkStatus" class="form-label">Status Baru</label>
-              <select class="form-select" id="bulkStatus" name="status" required>
-                <option value="">Pilih Status</option>
-                <option value="aktif">Aktif</option>
-                <option value="nonaktif">Nonaktif</option>
-              </select>
-            </div>
-            <div class="alert alert-info">
-              <i class="mdi mdi-information"></i>
-              <span id="selectedCount">0</span> ekspedisi akan diperbarui.
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-primary" onclick="executeBulkUpdate()">
-            <i class="mdi mdi-check-all"></i> Update
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Cleanup Modal -->
-  <div class="modal fade" id="cleanupModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Bersihkan Performa Buruk</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="cleanupForm">
-            <div class="mb-3">
-              <label for="threshold" class="form-label">Threshold Performa (%)</label>
-              <input type="number" class="form-control" id="threshold" name="threshold" value="50" min="1" max="100" required>
-              <div class="form-text">Ekspedisi dengan performa di bawah nilai ini akan dinonaktifkan.</div>
-            </div>
-            <div class="alert alert-warning">
-              <i class="mdi mdi-alert"></i>
-              Tindakan ini akan menonaktifkan ekspedisi dengan performa buruk.
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-          <button type="button" class="btn btn-danger" onclick="executeCleanup()">
-            <i class="mdi mdi-delete-sweep"></i> Bersihkan
-          </button>
-        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Simpan</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
   <script>
-    // Checkbox functionality
-    document.getElementById('selectAll').addEventListener('change', function() {
-      const checkboxes = document.querySelectorAll('.row-checkbox');
-      checkboxes.forEach(checkbox => {
-        checkbox.checked = this.checked;
-      });
-      updateBulkActionButton();
+    let isEditMode = false;
+    let editId = null;
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      loadKategori();
     });
 
-    document.getElementById('selectAllHeader').addEventListener('change', function() {
-      document.getElementById('selectAll').checked = this.checked;
-      document.getElementById('selectAll').dispatchEvent(new Event('change'));
-    });
-
-    document.querySelectorAll('.row-checkbox').forEach(checkbox => {
-      checkbox.addEventListener('change', updateBulkActionButton);
-    });
-
-    function updateBulkActionButton() {
-      const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
-      const bulkActionBtn = document.getElementById('bulkActionBtn');
-      
-      if (selectedCheckboxes.length > 0) {
-        bulkActionBtn.style.display = 'inline-block';
-        document.getElementById('selectedCount').textContent = selectedCheckboxes.length;
-      } else {
-        bulkActionBtn.style.display = 'none';
-      }
-    }
-
-    function deleteEkspedisi(id) {
-      if (confirm('Apakah Anda yakin ingin menghapus ekspedisi ini?')) {
-        window.location.href = '/web_scm/ekspedisi/delete/' + id;
-      }
-    }
-
-    function toggleStatus(id, newStatus) {
-      if (confirm('Apakah Anda yakin ingin mengubah status ekspedisi ini?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/web_scm/ekspedisi/updateStatus';
-        
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = id;
-        
-        const statusInput = document.createElement('input');
-        statusInput.type = 'hidden';
-        statusInput.name = 'status';
-        statusInput.value = newStatus;
-        
-        form.appendChild(idInput);
-        form.appendChild(statusInput);
-        document.body.appendChild(form);
-        form.submit();
-      }
-    }
-
-    function showImportModal() {
-      new bootstrap.Modal(document.getElementById('importModal')).show();
-    }
-
-    function showBulkUpdateModal() {
-      new bootstrap.Modal(document.getElementById('bulkUpdateModal')).show();
-    }
-
-    function showCleanupModal() {
-      new bootstrap.Modal(document.getElementById('cleanupModal')).show();
-    }
-
-    function importFromApi() {
-      if (confirm('Mulai proses import dari Raja Ongkir API?')) {
-        window.location.href = '/web_scm/ekspedisi/import';
-      }
-    }
-
-    function executeBulkUpdate() {
-      const selectedCheckboxes = document.querySelectorAll('.row-checkbox:checked');
-      const status = document.getElementById('bulkStatus').value;
-      
-      if (selectedCheckboxes.length === 0) {
-        alert('Pilih minimal satu ekspedisi');
-        return;
-      }
-      
-      if (!status) {
-        alert('Pilih status yang akan diupdate');
-        return;
-      }
-      
-      if (confirm(`Update status ${selectedCheckboxes.length} ekspedisi menjadi ${status}?`)) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/web_scm/ekspedisi/bulkUpdateStatus';
-        
-        selectedCheckboxes.forEach(checkbox => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'ids[]';
-          input.value = checkbox.value;
-          form.appendChild(input);
+    // Load all kategori
+    async function loadKategori() {
+      try {
+        // Test API connection first
+        const testResponse = await fetch('<?= API_BASE_URL ?>/health', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
+
+        if (!testResponse.ok) {
+          throw new Error('Backend server tidak dapat dijangkau');
+        }
+
+        const authToken = getAuthToken();
+        if (!authToken) {
+          showAlert('error', 'Session berakhir, silakan login ulang');
+          setTimeout(() => {
+            window.location.href = '/web_scm/login';
+          }, 2000);
+          return;
+        }
+
+        const response = await fetch('<?= API_BASE_URL ?>/kategori', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          }
+        });
+
+        const result = await response.json();
         
-        const statusInput = document.createElement('input');
-        statusInput.type = 'hidden';
-        statusInput.name = 'status';
-        statusInput.value = status;
-        form.appendChild(statusInput);
-        
-        document.body.appendChild(form);
-        form.submit();
+        if (response.ok && result.data) {
+          displayKategori(result.data);
+        } else if (response.status === 401 || response.status === 403) {
+          showAlert('error', 'Session berakhir, silakan login ulang');
+          setTimeout(() => {
+            window.location.href = '/web_scm/login';
+          }, 2000);
+        } else {
+          showAlert('error', result.error || 'Gagal memuat data kategori');
+          document.getElementById('kategoriTableBody').innerHTML = 
+            '<tr><td colspan="5" class="text-center text-danger">Gagal memuat data</td></tr>';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('error', 'Terjadi kesalahan saat memuat data: ' + error.message);
+        document.getElementById('kategoriTableBody').innerHTML = 
+          '<tr><td colspan="5" class="text-center text-danger">Terjadi kesalahan</td></tr>';
       }
     }
 
-    function executeCleanup() {
-      const threshold = document.getElementById('threshold').value;
+    // Display kategori data
+    function displayKategori(kategori) {
+      const tbody = document.getElementById('kategoriTableBody');
       
-      if (!threshold) {
-        alert('Masukkan nilai threshold');
+      if (kategori.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Tidak ada data kategori</td></tr>';
         return;
       }
+
+      let html = '';
+      kategori.forEach((item, index) => {
+        html += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${escapeHtml(item.nama_kategori)}</td>
+            <td>${escapeHtml(item.deskripsi || '-')}</td>
+            <td>
+              <span class="badge badge-info">${item.total_products || 0} produk</span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="editKategori(${item.id})" title="Edit">
+                <i class="icon-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteKategori(${item.id}, '${escapeHtml(item.nama_kategori)}')" title="Hapus">
+                <i class="icon-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
       
-      if (confirm(`Nonaktifkan semua ekspedisi dengan performa di bawah ${threshold}%?`)) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/web_scm/ekspedisi/cleanupPoorPerformers';
+      tbody.innerHTML = html;
+    }
+
+    // Show create form
+    function showCreateForm() {
+      isEditMode = false;
+      editId = null;
+      document.getElementById('modalTitle').textContent = 'Tambah Kategori';
+      document.getElementById('submitBtn').textContent = 'Simpan';
+      document.getElementById('kategoriForm').reset();
+      document.getElementById('kategoriId').value = '';
+      $('#kategoriModal').modal('show');
+    }
+
+    // Edit kategori
+    async function editKategori(id) {
+      try {
+        const response = await fetch('<?= API_BASE_URL ?>/kategori/' + id, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getAuthToken()
+          }
+        });
+
+        const result = await response.json();
         
-        const thresholdInput = document.createElement('input');
-        thresholdInput.type = 'hidden';
-        thresholdInput.name = 'threshold';
-        thresholdInput.value = threshold;
-        form.appendChild(thresholdInput);
-        
-        document.body.appendChild(form);
-        form.submit();
+        if (response.ok && result.data) {
+          isEditMode = true;
+          editId = id;
+          document.getElementById('modalTitle').textContent = 'Edit Kategori';
+          document.getElementById('submitBtn').textContent = 'Perbarui';
+          document.getElementById('kategoriId').value = id;
+          document.getElementById('nama_kategori').value = result.data.nama_kategori;
+          document.getElementById('deskripsi').value = result.data.deskripsi || '';
+          $('#kategoriModal').modal('show');
+        } else {
+          showAlert('error', result.error || 'Gagal memuat data kategori');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('error', 'Terjadi kesalahan saat memuat data');
       }
+    }
+
+    // Submit form
+    document.getElementById('kategoriForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        nama_kategori: document.getElementById('nama_kategori').value.trim(),
+        deskripsi: document.getElementById('deskripsi').value.trim()
+      };
+
+      if (!formData.nama_kategori) {
+        showAlert('error', 'Nama kategori wajib diisi');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Menyimpan...';
+      submitBtn.disabled = true;
+
+      try {
+        const url = isEditMode ? '<?= API_BASE_URL ?>/kategori/' + editId : '<?= API_BASE_URL ?>/kategori';
+        const method = isEditMode ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getAuthToken()
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          $('#kategoriModal').modal('hide');
+          showAlert('success', result.message || `Kategori berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}`);
+          loadKategori();
+        } else {
+          showAlert('error', result.error || `Gagal ${isEditMode ? 'memperbarui' : 'menambahkan'} kategori`);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('error', 'Terjadi kesalahan saat menyimpan data');
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Delete kategori
+    async function deleteKategori(id, nama) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus kategori "${nama}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch('<?= API_BASE_URL ?>/kategori/' + id, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getAuthToken()
+          }
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          showAlert('success', result.message || 'Kategori berhasil dihapus');
+          loadKategori();
+        } else {
+          showAlert('error', result.error || 'Gagal menghapus kategori');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('error', 'Terjadi kesalahan saat menghapus data');
+      }
+    }
+
+    // Show alert
+    function showAlert(type, message) {
+      const alertContainer = document.getElementById('alertContainer');
+      const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+      
+      alertContainer.innerHTML = `
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+          ${escapeHtml(message)}
+          <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+          </button>
+        </div>
+      `;
+
+      // Auto hide after 5 seconds
+      setTimeout(() => {
+        const alert = alertContainer.querySelector('.alert');
+        if (alert) {
+          $(alert).alert('close');
+        }
+      }, 5000);
+    }
+
+    // Get auth token from PHP session (via hidden input or AJAX call)
+    function getAuthToken() {
+      // Get token from PHP session via a dedicated endpoint
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/web_scm/get-token', false); // Synchronous untuk token
+        xhr.send();
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          return response.token || '';
+        }
+      } catch (e) {
+        console.log('Failed to get token from session');
+      }
+      return '';
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text ? text.replace(/[&<>"']/g, m => map[m]) : '';
     }
   </script>
 
   <?php include 'template/script.php'; ?>
 </body>
-
 </html>

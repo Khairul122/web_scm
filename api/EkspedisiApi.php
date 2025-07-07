@@ -5,7 +5,7 @@ class EkspedisiApi {
     private $baseUrl;
 
     public function __construct() {
-        $this->baseUrl = API_BASE_URL . '/kurir';
+        $this->baseUrl = API_BASE_URL . '/api/kurir';
     }
 
     private function makeRequest($endpoint, $method = 'GET', $data = null) {
@@ -28,7 +28,7 @@ class EkspedisiApi {
             ]
         ];
 
-        if ($data && in_array($method, ['POST', 'PUT', 'PATCH'])) {
+        if ($data && in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
             $options['http']['content'] = json_encode($data);
         }
 
@@ -45,6 +45,14 @@ class EkspedisiApi {
 
         $decodedResponse = json_decode($response, true);
         
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return [
+                'success' => false,
+                'error' => 'Response tidak valid dari server',
+                'data' => []
+            ];
+        }
+
         return [
             'success' => !isset($decodedResponse['error']),
             'data' => $decodedResponse,
@@ -54,8 +62,8 @@ class EkspedisiApi {
 
     public function getAllKurir($status = null) {
         $endpoint = '';
-        if ($status) {
-            $endpoint = '?status=' . $status;
+        if ($status === 'active') {
+            $endpoint = '?status=active';
         }
         return $this->makeRequest($endpoint);
     }
@@ -85,38 +93,6 @@ class EkspedisiApi {
         return $this->makeRequest('/search?q=' . urlencode($query));
     }
 
-    public function getKurirStats() {
-        return $this->makeRequest('/stats');
-    }
-
-    public function getKurirPerformance() {
-        return $this->makeRequest('/performance');
-    }
-
-    public function getKurirDeliveryTime() {
-        return $this->makeRequest('/delivery-time');
-    }
-
-    public function getKurirCostAnalysis() {
-        return $this->makeRequest('/cost-analysis');
-    }
-
-    public function getKurirAnalytics() {
-        return $this->makeRequest('/analytics');
-    }
-
-    public function getKurirUsageStats() {
-        return $this->makeRequest('/usage-stats');
-    }
-
-    public function getPoorPerformingKurir($threshold = 70) {
-        return $this->makeRequest('/poor-performers?threshold=' . $threshold);
-    }
-
-    public function getKurirTrends($days = 30) {
-        return $this->makeRequest('/trends?days=' . $days);
-    }
-
     public function getAvailableKurirCodes() {
         return $this->makeRequest('/available-codes');
     }
@@ -127,6 +103,18 @@ class EkspedisiApi {
 
     public function bulkUpdateStatus($data) {
         return $this->makeRequest('/bulk-update', 'POST', $data);
+    }
+
+    public function getKurirStats() {
+        return $this->makeRequest('/stats');
+    }
+
+    public function getKurirPerformance() {
+        return $this->makeRequest('/performance');
+    }
+
+    public function getKurirAnalytics() {
+        return $this->makeRequest('/analytics');
     }
 
     public function cleanupPoorPerformers($threshold) {

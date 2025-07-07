@@ -21,8 +21,11 @@ class EkspedisiController {
         }
 
         $status = $_GET['status'] ?? '';
+        $search = $_GET['q'] ?? '';
         
-        if ($status === 'active') {
+        if (!empty($search)) {
+            $ekspedisiList = $this->ekspedisiModel->searchKurir($search);
+        } elseif ($status === 'active') {
             $ekspedisiList = $this->ekspedisiModel->getActiveKurir();
         } else {
             $ekspedisiList = $this->ekspedisiModel->getAllKurir();
@@ -35,7 +38,8 @@ class EkspedisiController {
             'ekspedisi' => $ekspedisiList,
             'error' => $error,
             'success' => $success,
-            'status_filter' => $status
+            'status_filter' => $status,
+            'search_query' => $search
         ];
 
         include VIEWS_PATH . 'admin/ekspedisi/index.php';
@@ -50,7 +54,6 @@ class EkspedisiController {
             exit;
         }
 
-        // Get available courier codes
         $availableCodes = $this->ekspedisiModel->getAvailableKurirCodes();
 
         $data = [
@@ -87,7 +90,6 @@ class EkspedisiController {
             exit;
         }
 
-        // Get available courier codes
         $availableCodes = $this->ekspedisiModel->getAvailableKurirCodes();
 
         $data = [

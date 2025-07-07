@@ -12,7 +12,7 @@ class EkspedisiModel {
         $result = $this->ekspedisiApi->getAllKurir();
         
         if ($result['success']) {
-            return $result['data']['data'] ?? [];
+            return $result['data']['data'] ?? $result['data'] ?? [];
         }
         
         return [];
@@ -22,7 +22,7 @@ class EkspedisiModel {
         $result = $this->ekspedisiApi->getAllKurir('active');
         
         if ($result['success']) {
-            return $result['data']['data'] ?? [];
+            return $result['data']['data'] ?? $result['data'] ?? [];
         }
         
         return [];
@@ -32,7 +32,7 @@ class EkspedisiModel {
         $result = $this->ekspedisiApi->getKurirById($id);
         
         if ($result['success']) {
-            return $result['data']['data'] ?? null;
+            return $result['data']['data'] ?? $result['data'] ?? null;
         }
         
         return null;
@@ -43,7 +43,7 @@ class EkspedisiModel {
         
         return [
             'success' => $result['success'],
-            'data' => $result['data']['data'] ?? null,
+            'data' => $result['data']['data'] ?? $result['data'] ?? null,
             'error' => $result['error'] ?? ($result['data']['error'] ?? 'Gagal menambahkan ekspedisi')
         ];
     }
@@ -53,7 +53,7 @@ class EkspedisiModel {
         
         return [
             'success' => $result['success'],
-            'data' => $result['data']['data'] ?? null,
+            'data' => $result['data']['data'] ?? $result['data'] ?? null,
             'error' => $result['error'] ?? ($result['data']['error'] ?? 'Gagal memperbarui ekspedisi')
         ];
     }
@@ -72,7 +72,7 @@ class EkspedisiModel {
         
         return [
             'success' => $result['success'],
-            'data' => $result['data']['data'] ?? null,
+            'data' => $result['data']['data'] ?? $result['data'] ?? null,
             'error' => $result['error'] ?? ($result['data']['error'] ?? 'Gagal memperbarui status ekspedisi')
         ];
     }
@@ -81,97 +81,7 @@ class EkspedisiModel {
         $result = $this->ekspedisiApi->searchKurir($query);
         
         if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getKurirStats() {
-        $result = $this->ekspedisiApi->getKurirStats();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [
-            'total_kurir' => 0,
-            'active_kurir' => 0,
-            'inactive_kurir' => 0
-        ];
-    }
-
-    public function getKurirPerformance() {
-        $result = $this->ekspedisiApi->getKurirPerformance();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getKurirDeliveryTime() {
-        $result = $this->ekspedisiApi->getKurirDeliveryTime();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getKurirCostAnalysis() {
-        $result = $this->ekspedisiApi->getKurirCostAnalysis();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getKurirAnalytics() {
-        $result = $this->ekspedisiApi->getKurirAnalytics();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [
-            'overview' => [],
-            'performance' => [],
-            'delivery_time' => [],
-            'cost_analysis' => [],
-            'usage_statistics' => []
-        ];
-    }
-
-    public function getKurirUsageStats() {
-        $result = $this->ekspedisiApi->getKurirUsageStats();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getPoorPerformingKurir($threshold = 70) {
-        $result = $this->ekspedisiApi->getPoorPerformingKurir($threshold);
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
-    }
-
-    public function getKurirTrends($days = 30) {
-        $result = $this->ekspedisiApi->getKurirTrends($days);
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
+            return $result['data']['data'] ?? $result['data'] ?? [];
         }
         
         return [];
@@ -181,7 +91,7 @@ class EkspedisiModel {
         $result = $this->ekspedisiApi->getAvailableKurirCodes();
         
         if ($result['success']) {
-            return $result['data']['data'] ?? [];
+            return $result['data']['data'] ?? $result['data'] ?? [];
         }
         
         return [
@@ -210,6 +120,36 @@ class EkspedisiModel {
             'total_requested' => $result['data']['total_requested'] ?? 0,
             'error' => $result['error'] ?? ($result['data']['error'] ?? 'Gagal memperbarui status ekspedisi')
         ];
+    }
+
+    public function getKurirStats() {
+        $result = $this->ekspedisiApi->getKurirStats();
+        
+        if ($result['success']) {
+            return $result['data']['data'] ?? $result['data'] ?? [];
+        }
+        
+        return [];
+    }
+
+    public function getKurirPerformance() {
+        $result = $this->ekspedisiApi->getKurirPerformance();
+        
+        if ($result['success']) {
+            return $result['data']['data'] ?? $result['data'] ?? [];
+        }
+        
+        return [];
+    }
+
+    public function getKurirAnalytics() {
+        $result = $this->ekspedisiApi->getKurirAnalytics();
+        
+        if ($result['success']) {
+            return $result['data']['data'] ?? $result['data'] ?? [];
+        }
+        
+        return [];
     }
 
     public function cleanupPoorPerformers($threshold) {

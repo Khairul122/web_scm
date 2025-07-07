@@ -9,51 +9,26 @@ class KategoriModel {
     }
 
     public function getAllKategori() {
-        $result = $this->kategoriApi->getAllKategori();
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? [];
-        }
-        
-        return [];
+        return $this->kategoriApi->getAllKategori();
     }
 
     public function getKategoriById($id) {
-        $result = $this->kategoriApi->getKategoriById($id);
-        
-        if ($result['success']) {
-            return $result['data']['data'] ?? null;
-        }
-        
-        return null;
+        return $this->kategoriApi->getKategoriById($id);
     }
 
     public function createKategori($data) {
-        $result = $this->kategoriApi->createKategori($data);
-        
-        return [
-            'success' => $result['success'],
-            'data' => $result['data']['data'] ?? null,
-            'error' => $result['error']
-        ];
+        return $this->kategoriApi->createKategori($data);
     }
 
     public function updateKategori($id, $data) {
-        $result = $this->kategoriApi->updateKategori($id, $data);
-        
-        return [
-            'success' => $result['success'],
-            'data' => $result['data']['data'] ?? null,
-            'error' => $result['error']
-        ];
+        return $this->kategoriApi->updateKategori($id, $data);
     }
 
     public function deleteKategori($id) {
-        $result = $this->kategoriApi->deleteKategori($id);
-        
-        return [
-            'success' => $result['success'],
-            'error' => $result['error']
-        ];
+        return $this->kategoriApi->deleteKategori($id);
+    }
+
+    public function getKategoriProducts($id) {
+        return $this->kategoriApi->getKategoriProducts($id);
     }
 }
